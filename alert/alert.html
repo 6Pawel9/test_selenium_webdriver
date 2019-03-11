@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<head>
+<meta charset="utf-8">
+</head>
+<img src="http://www.studia-podyplomowe.biz.pl/wp-content/uploads/2014/11/wyzsze_szkoly_bankowe_logo.jpg" alt ="Wyższe Szkoły Bankowe" height=100 width=300</img>
+<p>Naciśnij przycisk, by wywołać alert</p>
+
+<button id="zwykly" onclick="funkcjaAlert()">Wywołaj</button>
+
+<script>
+function funkcjaAlert() {
+  alert("Oto prosty alert!");
+}
+</script>
+
+<br><br>
+<p>Naciśnij przycisk, by wywołać prompt</p>
+<button id="prompt" onclick="funkcjaPrompt()">Wywołaj</button>
+
+<p id="name"></p>
+
+<script>
+function funkcjaPrompt() {
+  var person = prompt("Podaj imię", "Renee Madison");
+  if (person == "Renee Madison") {
+  document.getElementById("name").innerHTML =
+  "Cześć Alice Wakefield!";
+}
+  else if (person != null) {
+    document.getElementById("name").innerHTML =
+    "Cześć " + person + "!";
+  }
+}
+</script>
+<br>
+<p>Naciśnij przycisk, by wywołać confirm</p>
+
+<button id="conf"  onclick="funkcjaConfirm()">Wywołaj</button>
+
+<script>
+function funkcjaConfirm() {
+  a = confirm("Wciśnij OK");
+  document.getElementById("tinder").innerHTML = a;
+}
+</script>
+<p id="tinder"></p>
+</body>
+</html>
