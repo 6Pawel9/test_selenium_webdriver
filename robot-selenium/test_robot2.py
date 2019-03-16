@@ -1,4 +1,5 @@
-# -*- coding: utf-8" -*
+# -*- coding: utf-8" -*-
+import time
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -27,10 +28,15 @@ class WpPlPoczta(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Chrome()
-
-    def test_mail(self):
+        self.driver.maximize_window()
         self.driver.get("http://www.wp.pl")
-        self.driver.find_element_by_link_text('POCZTA').click()
+        acc=self.driver.find_element_by_xpath("//button[contains(text(),'PRZECHODZĘ')]")
+        self.driver.execute_script("arguments[0].click()", acc)
+
+    def test_mail_odebrane(self):
+        poczta_btn = WebDriverWait(self.driver, 20).until(
+            EC.element_to_be_clickable((By.LINK_TEXT, 'POCZTA')))
+        self.driver.execute_script("arguments[0].click()", poczta_btn)
         login_field = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "login")))
         # login_field = self.driver.find_element_by_id("login")
@@ -40,14 +46,23 @@ class WpPlPoczta(unittest.TestCase):
         password_field.clear()
         password_field.send_keys(valid_password)
         self.driver.find_element_by_id("btnSubmit").click()
-        odebrane = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.LINK_TEXT, 'Odebrane')))
-        # odebrane.click()
-        self.driver.find_element_by_link_text("wyloguj").click()
+        handles = self.driver.window_handles
+        # Jeśli wyskoczyła upierdliwa rekalama, to ją zamknij
+        if len(handles) > 1:
+            time.sleep(2)
+            self.driver.switch_to_window(handles[0])
+            self.driver.find_element_by_id("btnSubmit").click()
+            self.driver.switch_to_window(handles[1])
+            self.driver.close()
+            self.driver.switch_to_window(handles[0])
+
+        odebrane = WebDriverWait(self.driver, 8).until(
+            EC.visibility_of_element_located((By.XPATH, '//div[@title="Odebrane"]')))
 
     def test_wrong_password(self):
-        self.driver.get("http://www.wp.pl")
-        self.driver.find_element_by_link_text('POCZTA').click()
+        poczta_btn = WebDriverWait(self.driver, 20).until(
+            EC.element_to_be_clickable((By.LINK_TEXT, 'POCZTA')))
+        self.driver.execute_script("arguments[0].click()", poczta_btn)
         login_field = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "login")))
         # login_field = self.driver.find_element_by_id("login")
@@ -57,12 +72,13 @@ class WpPlPoczta(unittest.TestCase):
         password_field.clear()
         password_field.send_keys(wrong_password)
         self.driver.find_element_by_id("btnSubmit").click()
-        WebDriverWait(self.driver, 15).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.XPATH, "//*[@class='szary error']")))
 
     def test_wrong_user(self):
-        self.driver.get("http://www.wp.pl")
-        self.driver.find_element_by_link_text('POCZTA').click()
+        poczta_btn = WebDriverWait(self.driver, 20).until(
+            EC.element_to_be_clickable((By.LINK_TEXT, 'POCZTA')))
+        self.driver.execute_script("arguments[0].click()", poczta_btn)
         login_field = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "login")))
         # login_field = self.driver.find_element_by_id("login")
@@ -72,12 +88,13 @@ class WpPlPoczta(unittest.TestCase):
         password_field.clear()
         password_field.send_keys(valid_password)
         self.driver.find_element_by_id("btnSubmit").click()
-        WebDriverWait(self.driver, 15).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.XPATH, "//*[@class='szary error']")))
 
     def test_wrong_user_and_password(self):
-        self.driver.get("http://www.wp.pl")
-        self.driver.find_element_by_link_text('POCZTA').click()
+        poczta_btn = WebDriverWait(self.driver, 20).until(
+            EC.element_to_be_clickable((By.LINK_TEXT, 'POCZTA')))
+        self.driver.execute_script("arguments[0].click()", poczta_btn)
         login_field = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "login")))
         # login_field = self.driver.find_element_by_id("login")
@@ -87,7 +104,7 @@ class WpPlPoczta(unittest.TestCase):
         password_field.clear()
         password_field.send_keys(wrong_password)
         self.driver.find_element_by_id("btnSubmit").click()
-        WebDriverWait(self.driver, 15).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.XPATH, "//*[@class='szary error']")))
 
     def tearDown(self):
